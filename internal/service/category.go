@@ -1,7 +1,8 @@
 package service
 
-
 import (
+	"context"
+
 	"github.com/lucasferreirajs/grpc/internal/database"
 	"github.com/lucasferreirajs/grpc/internal/pb"
 )
@@ -13,26 +14,21 @@ type CategoryService struct {
 
 func NewCategoryService(categoryDB database.Category) *CategoryService {
 	return &CategoryService{
-		CategoryDB: categoryDB
+		CategoryDB: categoryDB,
 	}
-
-
 }
 
-
-func (UnimplementedCategoryServiceServer) CreateCategory(ctx context.Context, in *pb.CreateCategoryRequest) (*pb.CategoryResponse, error) {
+func (c *CategoryService) CreateCategory(ctx context.Context, in *pb.CreateCategoryRequest) (*pb.Category, error) {
 	category, err := c.CategoryDB.Create(in.Name, in.Description)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	categoryResponse := &pb.Category{
-		Id: category.Id,
-		Name: category.Name,
+		Id:          category.ID,
+		Name:        category.Name,
 		Description: category.Description,
 	}
 
-	return &pb.categoryResponse{
-		Category: categoryResponse,
-	}, nil
+	return categoryResponse, nil
 }
