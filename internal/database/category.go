@@ -49,3 +49,25 @@ func (c *Category) FindAll() ([]Category, error) {
 
 	return categories, nil
 }
+
+func (c *Category) Find(inputId string) (*Category, error) {
+
+	row, err := c.db.Query("SELECT * FROM categories WHERE id = $1", inputId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer row.Close()
+
+	var id, name, description string
+	for row.Next() {
+		err = row.Scan(&id, &name, &description)
+		if err != nil {
+			return nil, err
+		}
+
+	}
+	category := Category{ID: id, Name: name, Description: description}
+
+	return &category, nil
+}
